@@ -33,11 +33,19 @@ def k_means(data, ncluster):
     centroids = []
     for centroid_index in centroid_indices:
         centroids.append(data[centroid_index])
-    print(centroids)
-    clusters = assign_data_points_to_clusters(data, centroids, ncluster)
-    new_centroids = compute_centroids(clusters)
-    print(new_centroids)
-    # print(clusters)
+
+    # start assignment
+    counter = 0
+    while True:
+        counter += 1
+        clusters = assign_data_points_to_clusters(data, centroids, ncluster)
+        new_centroids = compute_centroids(clusters)
+        # finish loop if there are no changes anymore
+        if np.array_equal(centroids, new_centroids):
+            break
+        centroids = new_centroids
+    print('The algorithm ran through ' + str(counter) + " iterations.")
+    return clusters
 
 if __name__ == "__main__":
     # iris = sk.datasets.load_iris().data
@@ -48,4 +56,5 @@ if __name__ == "__main__":
     data = np.array([[1, 2], [1, 1], [2, 2], [3, 7], [3, 8], [4, 8], [7, 1],
     [7, 2], [8, 2]])
 
-    k_means(data, 3)
+    clusters = k_means(data, 3)
+    print(clusters)
