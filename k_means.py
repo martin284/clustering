@@ -2,31 +2,42 @@ import numpy as np
 import sklearn as sk
 from sklearn import datasets # why do I need this?
 
-def assign_data_points_to_clusters(data, centroid_indices):
+def assign_data_points_to_clusters(data, centroids, ncluster):
     # data structure for saving data points in clusters
-    clusters = {}
-    for index in centroid_indices:
-        clusters[index] = []
+    clusters = [[] for i in range(ncluster)]
     # assign every data point to a cluster
     for data_point in data:
-        nearest_centroid_index = centroid_indices[0]
-        min_distance = np.linalg.norm(data[nearest_centroid_index]-data_point)
-        for centroid_index in centroid_indices:
-            distance = np.linalg.norm(data[centroid_index]-data_point)
-            if distance < min_distance:
-                nearest_centroid_index = centroid_index
-                min_distance = distance
+        nearest_centroid_index = 0
+        min_dist = np.linalg.norm(centroids[nearest_centroid_index]-data_point)
+        # for each centroid
+        for i in range(ncluster):
+            dist = np.linalg.norm(centroids[i]-data_point)
+            if dist < min_dist:
+                nearest_centroid_index = i
+                min_dist = dist
         clusters[nearest_centroid_index].append(data_point)
     return clusters
 
-
+def compute_centroids(clusters):
+    new_centroids = []
+    for i in range(len(clusters)):
+        data_points = clusters[i]
+        temp = np.mean(data_points, axis=0)
+        new_centroids.append(temp)
+    return new_centroids
 
 def k_means(data, ncluster):
     # create centroids via choosing indices randomly
     # not random yet for testing
     centroid_indices = [0, 3, 6]
-    clusters = assign_data_points_to_clusters(data, centroid_indices)
-    print(clusters)
+    centroids = []
+    for centroid_index in centroid_indices:
+        centroids.append(data[centroid_index])
+    print(centroids)
+    clusters = assign_data_points_to_clusters(data, centroids, ncluster)
+    new_centroids = compute_centroids(clusters)
+    print(new_centroids)
+    # print(clusters)
 
 if __name__ == "__main__":
     # iris = sk.datasets.load_iris().data
