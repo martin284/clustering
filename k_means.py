@@ -1,6 +1,7 @@
 import numpy as np
 import sklearn as sk
 from sklearn import datasets # why do I need this?
+import random
 
 def assign_data_points_to_clusters(data, centroids, ncluster):
     # data structure for saving data points in clusters
@@ -27,12 +28,10 @@ def compute_centroids(clusters):
     return new_centroids
 
 def k_means(data, ncluster):
-    # create centroids via choosing indices randomly
-    # not random yet for testing
-    centroid_indices = [0, 3, 6]
+    # choose centroids randomly
     centroids = []
-    for centroid_index in centroid_indices:
-        centroids.append(data[centroid_index])
+    for i in range(ncluster):
+        centroids.append(random.choice(data))
 
     # start assignment
     counter = 0
@@ -44,6 +43,8 @@ def k_means(data, ncluster):
         if np.array_equal(centroids, new_centroids):
             break
         centroids = new_centroids
+
+    # return the results
     print('The algorithm ran through ' + str(counter) + " iterations.")
     return clusters
 
