@@ -3,43 +3,25 @@ import sklearn as sk
 from sklearn import datasets # why do I need this?
 import random
 import matplotlib.pyplot as plt
-
-def assign_data_points_to_clusters(data, centroids, ncluster):
-    # data structure for saving data points in clusters
-    clusters = [[] for i in range(ncluster)]
-    # assign every data point to a cluster
-    for data_point in data:
-        nearest_centroid_index = 0
-        min_dist = np.linalg.norm(centroids[nearest_centroid_index]-data_point)
-        # for each centroid
-        for i in range(ncluster):
-            dist = np.linalg.norm(centroids[i]-data_point)
-            if dist < min_dist:
-                nearest_centroid_index = i
-                min_dist = dist
-        clusters[nearest_centroid_index].append(data_point)
-    return clusters
-
-def compute_centroids(clusters):
-    new_centroids = []
-    for i in range(len(clusters)):
-        data_points = clusters[i]
-        temp = np.mean(data_points, axis=0)
-        new_centroids.append(temp)
-    return new_centroids
+from scipy.spatial.distance import cdist
 
 def k_means(data, ncluster, n_iteration):
     # choose centroids randomly
     centroid_indices = np.random.choice(len(data), ncluster, replace=False)
-    centroids = []
-    for i in centroid_indices:
-        centroids.append(data[i])
+    centroids = data[centroid_indices]
+    print(centroids)
     # start assignment
     for i in range(n_iteration):
-        clusters = assign_data_points_to_clusters(data, centroids, ncluster)
-        centroids = compute_centroids(clusters)
+        # calculates the euclidean distances for every data point
+        distances = cdist(data, centroids, 'euclidean')
+        # assigns every data point to its nearest centroid
+        points = np.array([np.argmin(i) for i in distances])
+        # updates centroids
+        for i in range(ncluster):
+            centroid_temp = data[points==i].mean(axis=0)
+            centroids[i] = centroid_temp
     # return the results
-    return clusters
+    return points
 
 if __name__ == "__main__":
     # iris = sk.datasets.load_iris()
@@ -53,5 +35,5 @@ if __name__ == "__main__":
     [7, 2], [8, 2]])
     n_cluster = 3
     n_iteration = 1000
-    clusters = k_means(data, n_cluster, n_iteration)
-    print(clusters)
+    points_to_clusters = k_means(data, n_cluster, n_iteration)
+    print(points_to_clusters)
