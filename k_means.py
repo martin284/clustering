@@ -2,6 +2,7 @@ import numpy as np
 import sklearn as sk
 from sklearn import datasets # why do I need this?
 import random
+import matplotlib.pyplot as plt
 
 def assign_data_points_to_clusters(data, centroids, ncluster):
     # data structure for saving data points in clusters
@@ -27,35 +28,30 @@ def compute_centroids(clusters):
         new_centroids.append(temp)
     return new_centroids
 
-def k_means(data, ncluster):
+def k_means(data, ncluster, n_iteration):
     # choose centroids randomly
     centroid_indices = np.random.choice(len(data), ncluster, replace=False)
     centroids = []
     for i in centroid_indices:
         centroids.append(data[i])
     # start assignment
-    counter = 0
-    while True:
-        counter += 1
+    for i in range(n_iteration):
         clusters = assign_data_points_to_clusters(data, centroids, ncluster)
-        new_centroids = compute_centroids(clusters)
-        # finish loop if there are no changes anymore
-        if np.array_equal(centroids, new_centroids):
-            break
-        centroids = new_centroids
-
+        centroids = compute_centroids(clusters)
     # return the results
-    print('The algorithm ran through ' + str(counter) + " iterations.")
     return clusters
 
 if __name__ == "__main__":
-    # iris = sk.datasets.load_iris().data
-    # print(iris)
-    # print(type(iris))
+    # iris = sk.datasets.load_iris()
+    # X = iris.data[:, 0:2] # taking only the first 2 dimensions
+    # y = iris.target
+    # plt.scatter(X[:,0], X[:,1], c=y)
+    # plt.show()
 
     # create ndarray with test data
     data = np.array([[1, 2], [1, 1], [2, 2], [3, 7], [3, 8], [4, 8], [7, 1],
     [7, 2], [8, 2]])
-
-    clusters = k_means(data, 3)
+    n_cluster = 3
+    n_iteration = 1000
+    clusters = k_means(data, n_cluster, n_iteration)
     print(clusters)
