@@ -29,10 +29,10 @@ def compute_centroids(clusters):
 
 def k_means(data, ncluster):
     # choose centroids randomly
+    centroid_indices = np.random.choice(len(data), ncluster, replace=False)
     centroids = []
-    for i in range(ncluster):
-        centroids.append(random.choice(data))
-
+    for i in centroid_indices:
+        centroids.append(data[i])
     # start assignment
     counter = 0
     while True:
